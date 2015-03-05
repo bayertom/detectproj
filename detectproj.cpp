@@ -70,6 +70,7 @@
 #include "libalgo/source/algorithms/transformation/HomotheticTransformation2D.h"
 #include "libalgo/source/algorithms/turningfunction/TurningFunction.h"
 #include "libalgo/source/algorithms/innerdistance/InnerDistance.h"
+#include "libalgo/source/algorithms/projectiontoproj4/ProjectionToProj4.h"
 
 //For tests
 #include "libalgo/source/algorithms/numderivative/FProjEquationDerivative2Var.h"
@@ -77,6 +78,9 @@
 #include "libalgo/source/algorithms/nonlinearleastsquares/FAnalyzeProjV.h"
 #include "libalgo/source/algorithms/nonlinearleastsquares/FAnalyzeProjC.h"
 #include "libalgo/source/algorithms/simplexmethod/FAnalyzeProjV2S.h"
+//#include "libalgo/source/algorithms/bisection/Bisection.h"
+
+#include "libalgo/source/algorithms/nonlinearleastsquares/FAnalyzeProjV2.h"
 
 void printHeader ( std::ostream * output )
 {
@@ -85,11 +89,12 @@ void printHeader ( std::ostream * output )
 	*output << "  *                                                                      *" << std::endl;
 	*output << "  *               DETECTION OF THE CARTOGRAPHIC PROJECTION               *" << std::endl;
 	*output << "  *                                                                      *" << std::endl;
-	*output << "  *                (C)2010-2014 Tomas Bayer, v. 1.140618                 *" << std::endl;
+	*output << "  *                (C)2010-2014 Tomas Bayer, v. 1.141012                 *" << std::endl;
 	*output << "  *                       tomas.bayer@natur.cuni.cz                      *" << std::endl;
 	*output << "  *                                                                      *" << std::endl;
 	*output << "  ************************************************************************" << std::endl << std::endl << std::endl;
 }
+
 
 void printHelp ( std::ostream * output )
 {
@@ -168,7 +173,6 @@ int main ( int argc, char * argv[] )
 		analysis_parameters.perform_heuristic = false;
 		analysis_parameters.remove_outliers = false;
 		analysis_parameters.correct_rotation = false;
-		analysis_parameters.analysis_type.a_vd_tf = false;
 		//analysis_parameters.analysis_method = SimplexRot2Method;
 		analysis_parameters.analysis_method = SimplexRotMethod;
 		//analysis_parameters.analysis_method = SimplexMethod;
@@ -177,21 +181,195 @@ int main ( int argc, char * argv[] )
 		//analysis_parameters.analysis_method = NonLinearLeastSquaresRot2Method;
 		//analysis_parameters.analysis_method = NonLinearLeastSquaresRotMethod;
 		analysis_parameters.analysis_method = DifferentialEvolutionRotMethod;
-		//analysis_parameters.analysis_method = NonLinearLeastSquaresShiftsMethod;
-		analysis_parameters.projections_file = "projections_eqdc.txt";
+		analysis_parameters.analysis_method = DifferentialEvolutionRot2Method;
+		analysis_parameters.analysis_method = NonLinearLeastSquaresRot2Method;
+		analysis_parameters.analysis_method = NonLinearLeastSquaresMethod;
+		analysis_parameters.analysis_method = SimplexRot2Method;
+		analysis_parameters.analysis_method = DifferentialEvolutionMethod;
+		analysis_parameters.analysis_method = DifferentialEvolutionRot2Method;
+		//analysis_parameters.analysis_method = NonLinearLeastSquaresMethod;
+		analysis_parameters.analysis_method = NonLinearLeastSquaresRot2Method;
+		//analysis_parameters.analysis_method = NonLinear;
+		//analysis_parameters.analysis_method = SimplexRot2Method;
+		analysis_parameters.projections_file = "projections_sinu2.txt";
+		//analysis_parameters.analysis_method = DifferentialEvolutionRot2Method;
 
-		analysis_parameters.analysis_type.a_cnd = true;
-		analysis_parameters.analysis_type.a_gn_tf = true;
+		analysis_parameters.analysis_type.a_cnd = false;
+		analysis_parameters.analysis_type.a_gn_tf = false;
 		analysis_parameters.analysis_type.a_helt = true;
 		analysis_parameters.analysis_type.a_homt = true;
-		analysis_parameters.analysis_type.a_vd_tf = true;
-		analysis_parameters.analysis_type.a_vd_id = true;
-		analysis_parameters.lat_step = 1;
-		analysis_parameters.lon_step = 1;
-		analysis_parameters.printed_results = 10;
-		analysis_parameters.exported_graticule = 10;
+		analysis_parameters.analysis_type.a_vd_tf = false;
+		analysis_parameters.analysis_type.a_vd_id = false;
+		analysis_parameters.lat_step = 10;
+		analysis_parameters.lon_step = 10;
+		analysis_parameters.printed_results = 30;
+		analysis_parameters.exported_graticule = 1;
 
-		int lll = fmod ( -89, 90.0 );
+
+		/*
+		Container <Projection <double> *> projections1;
+		projections1.load("projections_nicol.txt");
+		Projection <double> *proj1 = projections1[0];
+		Point3DGeographic <double> cart_pole1(90, 0);
+		proj1->setCartPole(cart_pole1);
+		proj1->setLat0(30.0);
+		proj1->setR(1);
+
+		//Point3DGeographic<double> p_temp(-89.997, -79.999);
+		Point3DGeographic<double> p_temp(70, 10);
+
+		const double x_temp = CartTransformation::latLonToX(&p_temp, proj1, analysis_parameters.print_exceptions);
+		const double y_temp = CartTransformation::latLonToY(&p_temp, proj1, analysis_parameters.print_exceptions);
+
+		
+		/*
+		unsigned short iterations = 0;
+		const unsigned short max_iterations = 20;
+		double  xmin, fmin, lon0;
+		const double eps = 0.1, max_diff = 0.01;
+
+		//Set limits for bisection
+		Matrix <double> A(1, 1), B(1, 1), X(1,1);
+		A(0, 0) = -180; B(0, 0) = 180;
+	
+		//Bisection::test(FAnalyzeProjV2<double>::functionResBis, A);
+		*/
+		/*
+		double test = -180.3;
+		if (test < MIN_LON)  test = MIN_LON - fmod(test, MIN_LON);
+
+		double latp = 50, lonp = 0;
+		double lat = 30, lon = -10;
+
+		double lat_trans = CartTransformation::latToLatTrans(lat, lon, latp, lonp);
+		double lont_trans = CartTransformation::lonToLonTrans(lat, lon, lat_trans, latp, lonp, ReversedDirection);
+		/*
+		// [latp =latp,  lonp = lonp + 180], Normaldirection2
+		double latp2 = 50, lonp2 = lonp - 180;
+		TTransformedLongtitudeDirection lon_direction = NormalDirection2;
+		double lat_trans2 = CartTransformation::latToLatTrans(lat, lon, latp2, lonp2);
+		double lont_trans2 = CartTransformation::lonToLonTrans(lat, lon, lat_trans2, latp2, lonp2, lon_direction);
+
+		Container <Point3DGeographic<double> > points;
+		points.load<Dim2D>("reference.txt");
+		unsigned int n = points.size();
+
+		for (unsigned int i = 0; i < n; i++)
+		{
+			double latp = 40, lonp = 0;
+			double lat = 50;//points[i].getLat();
+			double lon = 50;//points[i].getLon();
+
+			double lat_trans = CartTransformation::latToLatTrans2(lat, lon, latp, lonp);
+			double lont_trans = CartTransformation::lonToLonTrans2(lat, lon, lat_trans, latp, lonp);
+
+			std::cout << lat_trans << "  " << lont_trans << '\n';
+
+			// [latp =latp,  lonp = lonp + 180], Normaldirection2
+			latp = 50, lonp = 180;
+			TTransformedLongtitudeDirection lon_direction = NormalDirection2;
+			double lat_trans2 = CartTransformation::latToLatTrans(lat, lon, latp, lonp);
+			double lont_trans2 = CartTransformation::lonToLonTrans(lat, lon, lat_trans, latp, lonp, lon_direction);
+
+			std::cout << lat_trans2 << "  " << lont_trans2 << "\n\n";
+		}
+		**/
+		/*
+		Container <Projection <double> *> projections;
+		projections.load("projections_four2.txt");
+		Projection <double> *proj = projections[0];
+
+
+		//double xxx = CartTransformation::latLonToX(proj->getXEquat(), proj->getFThetaEquat(), proj->getTheta0Equat(), -80.0, 15.0, 1.0, 1.0, 1.0, 0.0, 1.0, 30.0, 0.0, 0.0, false);
+		//double yyy = CartTransformation::latLonToX(proj->getYEquat(), proj->getFThetaEquat(), proj->getTheta0Equat(), -80.0, 15.0, 1.0, 1.0, 1.0, 0.0, 1.0, 30.0, 0.0, 0.0, false);
+
+
+		double lat = 20, lon = 15, R = 1, RO = 180 / M_PI;;
+		double y = 0.5*(sign(lat + atan(cos(0.5*lon) / tan(20/RO))*RO) - 1)*R*((1 + sin(20/RO) - cos(20)) / 2 + sin(-atan(cos(0.5*lon) / tan(20))*RO)*cos(20) - (1 + cos(-atan(cos(0.5*lon) / tan(20))*RO))*sin(20)*cos(lon / 2)) +
+			0.5*(sign(lat + atan(cos(0.5*lon) / tan(20/RO))*RO) + 1)*R*((1 + sin(20/RO) - cos(20)) / 2 + sin(lat)*cos(20) - (1 + cos(lat))*sin(20)*cos(lon / 2));
+
+
+		//0.0600282      42.2105868 - 0.0000298
+		//Point3DGeographic <double> cart_pole(42.2105868, -0.0000298);
+		Point3DGeographic <double> cart_pole(90, 0);
+		proj->setCartPole(cart_pole);
+		proj->setLat0(28);
+		proj->setLat1(0.0);
+		proj->setLat2(60.0);
+		proj->setLon0(0);
+		proj->setR(0.1);
+		proj->setC(0.5);
+
+		std::string proj4_string = ProjectionToProj4::ProjectionToProj4String(proj);
+
+		//Create graticule
+		analysis_parameters.lat_step = 5.0;
+		analysis_parameters.lon_step = 5.0;
+
+		TMeridiansListF <double> ::Type meridians_exp;
+		TParallelsListF <double> ::Type parallels_exp;
+		Container <Node3DCartesian <double> *> mer_par_points;
+
+		const TMinMax <double> lat_interval(10, 40);
+		const TMinMax <double> lon_interval(-30, 30);
+		unsigned int index = 0;
+		double alpha = 0;
+		//const TMinMax <double> lat_interval ( -83.0, 77.0 );
+		
+		Graticule::computeGraticule(proj, lat_interval, lon_interval, analysis_parameters.lat_step, analysis_parameters.lon_step, 0.1 * analysis_parameters.lat_step, 0.1 * analysis_parameters.lon_step, alpha, TransformedGraticule, meridians_exp, parallels_exp, &mer_par_points, index);
+		
+		//Create file name
+		char output_file_graticule[MAX_TEXT_LENGTH];
+		strcpy(output_file_graticule, "graticule_");
+		strcat(output_file_graticule, proj->getProjectionName());
+		strcat(output_file_graticule, ".dxf");
+
+		//Export graticule into DXF file
+		//const double font_height = 0.05 * proj->getR() * std::min(analysis_parameters.lat_step, analysis_parameters.lon_step) * M_PI / 180;
+		DXFExport::exportGraticuleToDXF(output_file_graticule, meridians_exp, parallels_exp, mer_par_points, 0.01, 10.0, 10.0);
+
+	
+
+		/*
+		//Load prOjection
+		Container <Projection <double> *> projections;
+		projections.load("projections_hamm.txt");
+		Projection <double> *proj = projections[0];
+
+		//Load point
+		Container < Point3DGeographic <double> *> pl_reference;
+		pl_reference.load<Dim2D>("E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\WorldMaps\\AirRoutes\\reference2.txt");
+		int nn = pl_reference.size();
+
+		Point3DGeographic <double> cart_pole(45, 0);
+		proj->setCartPole(cart_pole);
+		proj->setLat0(0.0);
+		proj->setLon0(0.0);
+		proj->setR(0.07);
+
+		for (unsigned int i = 0; i < nn; i++)
+		{
+
+				//Convert geographic point to oblique aspect
+				const double lat_trans = CartTransformation::latToLatTrans((pl_reference)[i]->getLat(), (pl_reference)[i]->getLon(), proj->getCartPole().getLat(), proj->getCartPole().getLon());
+				const double lon_trans = CartTransformation::lonToLonTrans(pl_reference[i]->getLat(), (pl_reference)[i]->getLon(), lat_trans, proj->getCartPole().getLat(), proj->getCartPole().getLon(), ReversedDirection2);
+				
+				std::cout << lat_trans << "  " << lon_trans << '\n';
+
+    				Point3DGeographic<double> p_temp(lat_trans, lon_trans);
+				const double x_temp = CartTransformation::latLonToX(&p_temp, proj, analysis_parameters.print_exceptions) + 0.2415;
+				const double y_temp = CartTransformation::latLonToY(&p_temp, proj, analysis_parameters.print_exceptions) - 0.1274;
+
+				std::cout << x_temp  << "  " << y_temp << '\n';
+				
+		}
+
+
+		Point3DGeographic<double> p1(45, 16), p(50, 15);
+
+		double lat_transp1 = CartTransformation::latToLatTrans(p1.getLat(), p1.getLon(), p.getLat(), p.getLon());
+		double lon_transp1 = CartTransformation::lonToLonTrans(p1.getLat(), p1.getLon(), lat_transp1, p.getLat(), p.getLon(), NormalDirection2);
+		
 		//analysis_parameters.lon0 = -70.3426043;
 		/*
 		TAnalyzedProjParametersList <double> ::Type analyzed_proj_parameters_list;
@@ -239,15 +417,48 @@ int main ( int argc, char * argv[] )
 		Container <Node3DCartesian <double> *> mer_par_points;
 
 
-		
+		*/
+		/*
 		Matrix <double> A(4, 4);
 
 		A(0, 0) = 3.8020;    A(0, 1) = 3.0397;    A(0, 2) = 2.1557;    A(0, 3) = 2.1239;
 		A(1, 0) = 3.0397;    A(1, 1) = 3.8405;    A(1, 2) = 2.5496;    A(1, 3) = 2.4076;
 		A(2, 0) = 2.1557;    A(2, 1) = 2.5496;    A(2, 2) = 3.2655;    A(2, 3) = 2.8074;
 		A(3, 0) = 2.1239;    A(3, 1) = 2.4076;    A(3, 2) = 2.8074;    A(3, 3) = 3.8146;
+		
+		unsigned int mm = 3;
+		//const Matrix <double> AC = ones(mm, mm, 1.0) * 10;
+		Matrix <double> B = A - 10;
+		B.print();
+		double mmm = median(B, 1);
+		double mmas = mad(B, 1);
+
+		//Outliers detection
+		Container < Node3DCartesian <double> *> PP, QQ, RR, SS;
+		QQ.load<Dim2D>("E:\\tomas\\cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t25_26\\eqdc\\Terr1\\t7_random_decr_prop_test_eqdc#-80_-160_80_160_10.txt");
+		PP.load<Dim2D>("E:\\tomas\\cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t25_26\\eqdc\\Terr1\\t7_random_decr_prop_test_eqdc_proj#-80_-160_80_160_10.txt");
+
+		//Convert to matrices
+		unsigned int m = PP.size();
+
+		Matrix <double> P(m, 2), Q(m, 2), W = eye(2 * m, 2 * m, 1.0), Eps(2 * m, 1);
+		Matrix <unsigned int> I(2 * m, 1);
+
+		for (int i = 0; i < m; i++)
+		{
+			P(i, 0) = PP[i]->getX(); P(i, 1) = PP[i]->getY();
+			Q(i, 0) = QQ[i]->getX(); Q(i, 1) = QQ[i]->getY();
+		}
+
+		double eps_init = 0, eps = 0;
+		unsigned int iter = 0;
+		P = P * 1.0 / 100000;  Q = Q * 1.0 / 100000;
+		TDevIndexPairs <double>::Type min_pairs;
+		//Outliers::findOutliersME(Q, P, 2.0, 1.0e-10, SimilarityScheme, TukeyFunction, 20, W, I, Eps, eps_init, eps, iter);
+		Outliers::findOutliersME(PP, QQ, RR, SS, 2.0, 1.0e-10, SimilarityScheme, DanishFunction2, 20, min_pairs, eps_init, eps, iter);
 		*/
-		Matrix <double> A(7, 7);
+		
+		//Matrix <double> A(7, 7);
 		/*
 		A(0, 0) = 8.9765;    A(0, 1) = 5.8414;    A(0, 2) = 8.1420;    A(0, 3) = 6.0109;    A(0, 4) = 6.7039;
 		A(1, 0) = 5.8414;    A(1, 1) = 9.6482;    A(1, 2) = 8.3619;    A(1, 3) = 7.2455;    A(1, 4) = 5.3522;
@@ -893,23 +1104,23 @@ int main ( int argc, char * argv[] )
 		/*
 		//Load cartographic projections from file
 		Container <Projection <double> *> projections;
-		projections.load ( "projections_aea.txt" );
+		projections.load ( "projections_hamm.txt" );
 		Container < Point3DGeographic <double> *> points;
 
-		points.load<Dim2D> ( "D:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\greece\\greece_test.txt" );
-		points.load<Dim2D> ( "D:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\greece\\greece_reference.txt" );
+		//points.load<Dim2D> ( "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\greece\\greece_test.txt" );
+		//points.load<Dim2D> ( "D:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\greece\\greece_reference.txt" );
 
 		for (int i = 0; i < points.size(); i++)
 		{
-		double lat_transp1 = CartTransformation::latToLatTrans(points[i]->getLat(), points[i]->getLon(), 0.0, 90.0);
-		double lon_transp1 = CartTransformation::lonToLonTrans(points[i]->getLat(), points[i]->getLon(), lat_transp1, 0.0, 90.0, NormalDirection );
+			double lat_transp1 = CartTransformation::latToLatTrans(points[i]->getLat(), points[i]->getLon(), 0.0, 90.0);
+			double lon_transp1 = CartTransformation::lonToLonTrans(points[i]->getLat(), points[i]->getLon(), lat_transp1, 0.0, 90.0, NormalDirection );
 
-		//std::cout << lat_transp1 << "  " << lon_transp1 << '\n';
+			//std::cout << lat_transp1 << "  " << lon_transp1 << '\n';
 
-		double xxp1 = CartTransformation::latLonToX ( projections[0]->getXEquat(), lat_transp1, lon_transp1, projections[0]->getR(), 0.0, 0.0, 0.0, projections[0]->getLat0(), 0.0, 0.0, 0.0 );
-		double yyp1 = CartTransformation::latLonToY ( projections[0]->getYEquat(), lat_transp1, lon_transp1, projections[0]->getR(), 0.0, 0.0, 0.0, projections[0]->getLat0(), 0.0, 0.0, 0.0 );
+			double xxp1 = CartTransformation::latLonToX ( projections[0]->getXEquat(), lat_transp1, lon_transp1, projections[0]->getR(), 0.0, 0.0, 0.0, projections[0]->getLat0(), 0.0, 0.0, 0.0 );
+			double yyp1 = CartTransformation::latLonToY ( projections[0]->getYEquat(), lat_transp1, lon_transp1, projections[0]->getR(), 0.0, 0.0, 0.0, projections[0]->getLat0(), 0.0, 0.0, 0.0 );
 
-		std::cout << xxp1 << "  " << yyp1 << '\n';
+			std::cout << xxp1 << "  " << yyp1 << '\n';
 		}
 
 		double kkk=37;
@@ -1628,12 +1839,113 @@ analysis_parameters.reference_file = "D:\\Tomas\\Cpp\\detectproj\\detectproj\\te
 //analysis_parameters.reference_file = "D:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t23_24\\eqdc\\Terr1\\M7\\target1\\t7_random_decr_prop_ref#-80_-160_80_160_10.txt";
 
 
-//analysis_parameters.test_file = "D:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t23_24\\eqdc\\Terr1\\M7\\t7_random_decr_prop_test_eqdc#-80_-160_80_160_10.txt";
-//analysis_parameters.reference_file = "D:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t23_24\\eqdc\\Terr1\\M7\\t7_random_decr_prop_ref#-80_-160_80_160_10.txt";
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\eqdc\\Terr1\\DE\\M7S\\t7_random_decr_prop_test_eqdc#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\eqdc\\Terr1\\DE\\M7S\\t7_random_decr_prop_ref#-80_-160_80_160_10.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\laea\\Terr1\\DE\\M7S\\t2_random_decr_prop_test_laea#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\laea\\Terr1\\DE\\M7S\\t2_random_decr_prop_ref#-80_-160_80_160_10.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\laea\\Terr1\\DE\\M7S\\test.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\laea\\Terr1\\DE\\M7S\\reference.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\merc\\Terr1\\DE\\M7S\\t7_random_decr_prop_test_merc#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\merc\\Terr1\\DE\\M7S\\t7_random_decr_prop_ref#-80_-160_80_160_10.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\eqdc\\Terr1\\BFGSH\\Terr3\\t7_random_decr_prop_test_eqdc#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\eqdc\\Terr1\\BFGSH\\Terr3\\t7_random_decr_prop_ref#-80_-160_80_160_10.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\merc\\Terr1\\BFGSH\\Terr3\\t7_random_decr_prop_test_merc#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\merc\\Terr1\\BFGSH\\Terr3\\t7_random_decr_prop_ref#-80_-160_80_160_10.txt";
 
 
-		//analysis_parameters.test_file = "D:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t7_merc\\Noise90\\Random\\t7\\-70\\merc\\t7_random_decr_prop_test_merc#-70_-160_70_140_1.txt";
-		//analysis_parameters.reference_file = "D:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t7_merc\\Noise90\\Random\\t7\\-70\\t7_random_decr_prop_ref#-70_-160_70_140_1.txt";
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\eqdc\\Terr1\\Nelder\\Terr3\\t7_random_decr_prop_test_eqdc#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\eqdc\\Terr1\\Nelder\\Terr3\\t7_random_decr_prop_ref#-80_-160_80_160_10.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\merc\\Terr1\\DE\\M7S\\t7_random_decr_prop_test_merc#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\merc\\Terr1\\DE\\M7S\\t7_random_decr_prop_ref#-80_-160_80_160_10.txt";
+
+ //analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\eqdc\\Terr1\\Nelder\\Terr4\\t7_random_decr_prop_test_eqdc#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\eqdc\\Terr1\\Nelder\\Terr4\\t7_random_decr_prop_ref#-80_-160_80_160_10.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\eqdc\\Terr2\\BFGSH\\Terr4\\t2_random_decr_prop_test_eqdc#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\eqdc\\Terr2\\BFGSH\\Terr4\\t2_random_decr_prop_ref#-80_-160_80_160_10.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\merc\\Terr2\\Nelder\\Terr4\\t2_random_decr_prop_test_merc#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\merc\\Terr2\\Nelder\\Terr4\\t2_random_decr_prop_ref#-80_-160_80_160_10.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\laea\\Terr2\\Nelder\\Terr4\\t2_random_decr_prop_test_laea#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\laea\\Terr2\\Nelder\\Terr4\\t2_random_decr_prop_ref#-80_-160_80_160_10.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\eqdc\\Terr2\\Nelder\\Terr4\\t2_random_decr_prop_test_eqdc#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\eqdc\\Terr2\\Nelder\\Terr4\\t2_random_decr_prop_ref#-80_-160_80_160_10.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\merc\\Terr2\\Nelder\\Terr4\\t2_random_decr_prop_test_merc#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\merc\\Terr2\\Nelder\\Terr4\\t2_random_decr_prop_ref#-80_-160_80_160_10.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\merc\\Terr2\\BFGSH\\Terr4\\t2_random_decr_prop_test_merc#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\merc\\Terr2\\BFGSH\\Terr4\\t2_random_decr_prop_ref#-80_-160_80_160_10.txt";
+
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\laea\\Terr2\\DE\\Terr4\\t2_random_decr_prop_test_laea#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\laea\\Terr2\\DE\\Terr4\\t2_random_decr_prop_ref#-80_-160_80_160_10.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\eqdc\\Terr2\\DE\\Terr4\\t2_random_decr_prop_test_eqdc#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\eqdc\\Terr2\\DE\\Terr4\\t2_random_decr_prop_ref#-80_-160_80_160_10.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\merc\\Terr2\\DE\\Terr4\\t2_random_decr_prop_test_merc#-80_-160_80_160_10.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t27_28\\merc\\Terr2\\DE\\Terr4\\t2_random_decr_prop_ref#-80_-160_80_160_10.txt";
+
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\tobler\\projA\\test.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\tobler\\projA\\reference.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\tobler\\projB\\test.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\tobler\\projB\\reference.txt";
+
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\ContentVsGraticule\\AmericaSanson\\Graticule\\BFGSH\\test.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\ContentVsGraticule\\AmericaSanson\\Graticule\\BFGSH\\reference.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\ContentVsGraticule\\Italy\\Graticule\\test.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\ContentVsGraticule\\Italy\\Graticule\\reference.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\ContentVsGraticule\\NorthernRegions\\Graticule\\test.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\ContentVsGraticule\\NorthernRegions\\Graticule\\reference.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\WorldMaps\\AirRoutes\\test.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\WorldMaps\\AirRoutes\\reference.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\WorldMaps\\Mercator\\test.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\WorldMaps\\Mercator\\reference.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\WorldMaps\\Ortelius\\test.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\WorldMaps\\Ortelius\\reference.txt";
+
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\WorldMaps\\Tectonico\\test.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\WorldMaps\\Tectonico\\reference.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\WorldMaps\\WorldPolitical\\test.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\WorldMaps\\WorldPolitical\\reference.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\WorldMaps\\Agriculture\\test.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\WorldMaps\\Agriculture\\reference.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\Hemisphere\\Hondius_world\\testw.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\Hemisphere\\Hondius_world\\referencew.txt";
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\Continents\\Asia\\test.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\Continents\\Asia\\reference.txt";
+
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\Continents\\Europe\\test.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\Continents\\Europe\\reference.txt";
+
+
+//analysis_parameters.test_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\LargeTerritories\\CentralAmerica\\test.txt";
+//analysis_parameters.reference_file = "E:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\maps\\Habilitation\\LargeTerritories\\CentralAmerica\\reference.txt";		//analysis_parameters.test_file = "D:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t7_merc\\Noise90\\Random\\t7\\-70\\merc\\t7_random_decr_prop_test_merc#-70_-160_70_140_1.txt";
+		
+//analysis_parameters.reference_file = "D:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t7_merc\\Noise90\\Random\\t7\\-70\\t7_random_decr_prop_ref#-70_-160_70_140_1.txt";
 
 		//analysis_parameters.test_file = "D:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t7_merc\\Noise90\\Random\\t7\\-60\\merc\\t7_random_decr_prop_test_merc#-60_-160_60_120_1.txt";
 		//analysis_parameters.reference_file = "D:\\Tomas\\Cpp\\detectproj\\detectproj\\tests\\synthetic\\habilitation\\t7_merc\\Noise90\\Random\\t7\\-60\\t7_random_decr_prop_ref#-60_-160_60_120_1.txt";
@@ -2231,8 +2543,8 @@ analysis_parameters.reference_file = "D:\\Tomas\\Cpp\\detectproj\\detectproj\\te
 		}
 
 		//Find and remove duplicate points
-		nl_test.removeDuplicateElements ( nl_test.begin(), nl_test.end(),  sortPointsByX (), isEqualPointByPlanarCoordinates <Node3DCartesian <double> *> () );
-		nl_reference.removeDuplicateElements ( nl_reference.begin(), nl_reference.end(), sortPointsByLat (), isEqualPointByPlanarCoordinates <Point3DGeographic <double> *> () );
+		//nl_test.removeDuplicateElements ( nl_test.begin(), nl_test.end(),  sortPointsByX (), isEqualPointByPlanarCoordinates <Node3DCartesian <double> *> () );
+		//nl_reference.removeDuplicateElements ( nl_reference.begin(), nl_reference.end(), sortPointsByLat (), isEqualPointByPlanarCoordinates <Point3DGeographic <double> *> () );
 
 		//Total unique points
 		const unsigned int n_test_unique = nl_test.size(), n_reference_unique = nl_reference.size();
@@ -2440,18 +2752,21 @@ analysis_parameters.reference_file = "D:\\Tomas\\Cpp\\detectproj\\detectproj\\te
 
 		//Print results into output
 		//Enable after analysis
-		//CartAnalysis::printResults ( sl, nl_test, nl_reference, analysis_parameters, &std::cout );
-		CartAnalysis::printResults ( sl, nl_test, nl_reference, analysis_parameters, output );
+		std::cout << "Print results";
+		//CartAnalysis::printResults(sl, nl_test, nl_reference, analysis_parameters, &std::cout);
+		CartAnalysis::printResults2 ( sl, nl_test, nl_reference, analysis_parameters, output );
 
 		//Compute solution diversity
+		/*
 		const double diversity = CartAnalysis::solutionDiversity ( sl, proj_list, nl_test, nl_reference, analysis_parameters.printed_results );
 		std::cout << std::setprecision ( 3 ) << "Solution diversity (first " << analysis_parameters.printed_results << " candidates): "  << '\n' << diversity << " km \n\n";
 		*output << std::setprecision ( 3 ) << "Solution diversity (first " << analysis_parameters.printed_results << " candidates): "  << '\n' << diversity << " km \n\n";
+		*/
 
 		//Create graticule for the results
 		if ( analysis_parameters.exported_graticule > 0 )
 		{
-			std::cout << ">> Exporting graticules, please wait... \n";
+			std::cout << ">> Exporting points and graticules, please wait... \n";
 
 			//Create graticules
 			for ( unsigned int i = 0; i < std::min ( ( unsigned int ) analysis_parameters.exported_graticule, sl.size() ); i++ )
@@ -2464,16 +2779,25 @@ analysis_parameters.reference_file = "D:\\Tomas\\Cpp\\detectproj\\detectproj\\te
 				Point3DGeographic <double> cart_pole ( sl[i].getLatP(), sl[i].getLonP() );
 				proj->setCartPole ( cart_pole );
 				proj->setLat0 ( sl[i].getLat0() );
+				//proj->setLat1(sl[i].getLat1());
+				//proj->setLat2(sl[i].getLat2());
 				proj->setLon0 ( sl[i].getLon0() );
 				proj->setDx ( sl[i].getDx() );
 				proj->setDy ( sl[i].getDy() );
 				proj->setC ( sl[i].getC() );
-
+				
 				//Get limits
 				TMinMax <double> lon_interval ( ( * std::min_element ( nl_reference.begin(), nl_reference.end(), sortPointsByLon () ) )->getLon(),
 					( * std::max_element ( nl_reference.begin(), nl_reference.end(), sortPointsByLon () ) )->getLon() );
 				TMinMax <double> lat_interval ( ( * std::min_element ( nl_reference.begin(), nl_reference.end(), sortPointsByLat () ) )->getLat(),
 					( * std::max_element ( nl_reference.begin(), nl_reference.end(), sortPointsByLat () ) )->getLat() );
+
+				//Stretch over the whole planishere
+				if ((lon_interval.min_val < MIN_LON + 20) && (lon_interval.max_val > MAX_LON - 20))
+				{
+					lon_interval.min_val = MIN_LON;
+					lon_interval.max_val = MAX_LON;
+				}
 
 				//std::cout << sl[i].getR() << "  " << sl[i].getDx() << "   " << sl[i].getDy() << "   " << sl[i].getAlpha() << '\n';
 				//std::cout << lon_interval.min_val << "  " << lon_interval.max_val << "   " << lat_interval.min_val << "   " << lat_interval.max_val << "   " << analysis_parameters.lat_step << "   " << analysis_parameters.lon_step << '\n';
@@ -2492,23 +2816,143 @@ analysis_parameters.reference_file = "D:\\Tomas\\Cpp\\detectproj\\detectproj\\te
 
 				//Create graticule
 				double alpha = sl[i].getAlpha();
+				//alpha = 26;
+				//std::cout << "grat = " << analysis_parameters.latp_step;
 				Graticule::computeGraticule ( proj, lat_interval, lon_interval, analysis_parameters.lat_step, analysis_parameters.lon_step, 0.1 * analysis_parameters.lat_step, 0.1 * analysis_parameters.lon_step, alpha, TransformedGraticule, meridians_exp, parallels_exp, &mer_par_points, index );
 
+				//Compute all points
+				Container <Node3DCartesianProjected <double> *> nl_projected_temp;
+
+				for (unsigned int j = 0; j < n_test_unique; j++)
+				{
+					//Get type of the direction
+					TTransformedLongtitudeDirection trans_lon_dir = proj->getLonDir();
+
+					//Reduce lon
+					const double lon_red = CartTransformation::redLon0(nl_reference[j]->getLon(), proj->getLon0());
+
+					double lat_trans = 0.0, lon_trans = 0.0, x = 0.0, y = 0.0, x_temp = 0.0, y_temp = 0.0;
+					try
+					{
+						//Convert geographic point to oblique aspect
+						lat_trans = CartTransformation::latToLatTrans(nl_reference[j]->getLat(), lon_red, cart_pole.getLat(), cart_pole.getLon());
+						lon_trans = CartTransformation::lonToLonTrans(nl_reference[j]->getLat(), lon_red, cart_pole.getLat(), cart_pole.getLon(), trans_lon_dir);
+
+						//Change coordinates of the point
+						Point3DGeographic<double> point_geo(lat_trans, lon_trans);
+
+						for (unsigned int k = 0; k < 3; k++)
+						{
+							try
+							{
+								//Compute equations
+								x_temp = CartTransformation::latLonToX(&point_geo, proj, false);
+								y_temp = CartTransformation::latLonToY(&point_geo, proj, false);
+
+							}
+
+							//2 attempt to avoid the singularity
+							catch (Error &error)
+							{
+								lat_trans = point_geo.getLat();
+								lon_trans = point_geo.getLon();
+
+								//Move in latitude direction
+								if (k == 0)
+								{
+									if (lat_trans == MAX_LAT) lat_trans -= 2*GRATICULE_ANGLE_SHIFT;
+									else lat_trans += 2*GRATICULE_ANGLE_SHIFT;
+								}
+
+								//Move in longitude direction
+								else if (k == 1)
+								{
+									if (lon_trans == MAX_LON) lon_trans -= 2*GRATICULE_ANGLE_SHIFT;
+									else lon_trans += 2*GRATICULE_ANGLE_SHIFT;
+								}
+
+								//Neither first nor the second shhifts do not bring improvement
+								else if (k == 2)
+								{
+									throw;
+								}
+
+								point_geo.setLat(lat_trans);
+								point_geo.setLon(lon_trans);
+							}
+						}
+
+						//Get shifts: need to be additionally subtracted
+						const double dx = proj->getDx(), dy = proj->getDy();
+
+						//Non-rotated projection
+						if (alpha == 0.0)
+						{
+							x = x_temp; 
+							y = y_temp;
+						}
+
+						//Rotated projection
+						else
+						{
+							x = (x_temp - dx) * cos(alpha * M_PI / 180) - (y_temp - dy) * sin(alpha * M_PI / 180) + dx;
+							y = (x_temp - dx) * sin(alpha * M_PI / 180) + (y_temp - dy) * cos(alpha * M_PI / 180) + dy;
+						}
+					}
+
+					//Get error argument
+					catch (ErrorMath <double> &error)
+					{
+						//Throw new math error
+						//throw ErrorMathInvalidArgument <double>("ErrorMathInvalidArgument: error in coordinate functions (lat/lon).", "Can not compute exported points.", lat_trans);
+					}
+
+					//Create new cartographic point
+					Node3DCartesianProjected <double> *n_projected = new Node3DCartesianProjected <double>(x, y);
+
+					//Add point to the list
+					nl_projected_temp.push_back(n_projected);
+				}
+
+				//nl_projected_temp.print();
+				//nl_reference.print();
+				
 				//Convert position to char
 				char posit_text [5];
 				sprintf ( posit_text, "%d", i + 1 );
 
 				//Create file name
-				char output_file_graticule[MAX_TEXT_LENGTH];
+				char output_file_graticule[MAX_TEXT_LENGTH], output_file_points_ref[MAX_TEXT_LENGTH], output_file_points_test[MAX_TEXT_LENGTH], output_file_proj4[MAX_TEXT_LENGTH];
 				strcpy ( output_file_graticule, analysis_parameters.test_file );
+				strcpy( output_file_points_test, output_file_graticule);  //Copy string without ID and projection name
 				strcat ( output_file_graticule, "_" );
+				
 				strcat ( output_file_graticule, posit_text );
 				strcat ( output_file_graticule, "_" );
 				strcat ( output_file_graticule, proj->getProjectionName() );
-				strcat ( output_file_graticule, ".dxf" );
+
+				strcpy ( output_file_points_ref, output_file_graticule ); //Copy full string with ID and projection name
+				strcpy (output_file_proj4, output_file_graticule); //Copy full string with ID and projection name
+				strcat (output_file_graticule, "_grat.dxf");
+				strcat (output_file_points_ref, "_points_ref.dxf");
+				strcat (output_file_points_test, "_points_test.dxf");
+				strcat(output_file_proj4, "_proj4.bat");
 
 				//Export graticule into DXF file
 				DXFExport::exportGraticuleToDXF ( output_file_graticule, meridians_exp, parallels_exp, mer_par_points, font_height, analysis_parameters.lat_step, analysis_parameters.lon_step );
+
+				//Export estimated points into DXF file
+				DXFExport::exportPointsToDXF(output_file_points_ref, nl_projected_temp, font_height);
+
+				//Export test points into DXF file
+				if (i == 0)
+					DXFExport::exportPointsToDXF(output_file_points_test, nl_test, font_height);
+
+				//Create Proj.4 definition string
+				std::string proj4_string = ProjectionToProj4::ProjectionToProj4String(proj);
+				std::ofstream output_file(output_file_proj4);
+				output_file << proj4_string;
+				output_file.close();
 
 				//Print hash
 				std::cout.flush();
@@ -2552,3 +2996,5 @@ analysis_parameters.reference_file = "D:\\Tomas\\Cpp\\detectproj\\detectproj\\te
 	//Memory leak analysis for VS 2010
 	//_CrtDumpMemoryLeaks();
 }
+
+
