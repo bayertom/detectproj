@@ -21,8 +21,6 @@
 
 
 <h3><strong>Running the script</strong></h3>
-<h2>&nbsp;</h2>
-<h2>Command-line version of detectproj in C++</h2>
 <p>The generic C++ version&nbsp;(C++11 support) of the software detectprojv2j is available from git repository. <br />The basic parameters can be set using the command-line.<br />All methods and optimization techniques are involved.<br />Supported compilers: g++, msvc2015.</p>
 <h3>Basic usage</h3>
 <p>Set method, test and reference files, detection/optimization methods. Available methods: nlsm7, nlsm8, nmm7, nmm8, dem7, dem8:</p>
