@@ -160,7 +160,7 @@
 </tr>
 </tbody>
 </table>
-<p><span style="font-size: 12pt;"><br /><img src="https:web.natur.cuni.cz/~bayertom/images/europe_1_bone_grat_2.jpg" alt="europe 1 bone grat 2" width="885" height="636" style="display: block; margin-left: auto; margin-right: auto;" /></span></p>
+<p><span style="font-size: 12pt;"><br /><img src="https://web.natur.cuni.cz/~bayertom/images/europe_1_bone_grat_2.jpg" alt="europe 1 bone grat 2" width="885" height="636" style="display: block; margin-left: auto; margin-right: auto;" /></span></p>
 <p><span style="font-size: 12pt;">Determined parameters of the projection:<br /></span><span style="font-size: 12pt;"><span style="font-size: 12pt;">Projection: Bonne.<br /></span>Transformed pole position: ?<sub>k</sub> = 90.0<sup>0</sup>, ?<sub>k</sub> = 0.0<sup>0</sup>.</span><br /><span style="font-size: 12pt;"> Standard parallels: ?<sub>1</sub> =53. 5<sup>0</sup>, ?2 =53. 5<sup>0</sup>.</span><br /><span style="font-size: 12pt;"> Longitude of the central meridian: ?<sub>0</sub> = 14.7<sup>0</sup>.</span><br /><span style="font-size: 12pt;"> Arbitrary constant parameter: k = 1.0. </span><br /><span style="font-size: 12pt;"> Auxiliary sphere radius: R'= 0.3m. </span><br /><span style="font-size: 12pt;"> Map scale: S = 20 910 248.</span><br /><span style="font-size: 12pt;"> Angle of rotation: ? = 0.00.</span></p>
 <p>&nbsp;</p>
 <h3><span style="font-size: 12pt; line-height: 107%; font-family: 'Calibri',sans-serif;">Sample 2: World map in hemisphere, transverse aspect of the projection<br /></span></h3>
@@ -206,7 +206,7 @@
 </table>
 
 <p>&nbsp;<span style="font-family: 'Times New Roman',serif;"> </span><em></em></p>
-<p><img src="https:web.natur.cuni.cz/~bayertom/images/america_2_stereo_grat2.jpg" alt="america 2 stereo grat2" width="910" height="785" style="display: block; margin-left: auto; margin-right: auto;" /></p>
+<p><img src="https://web.natur.cuni.cz/~bayertom/images/america_2_stereo_grat2.jpg" alt="america 2 stereo grat2" width="910" height="785" style="display: block; margin-left: auto; margin-right: auto;" /></p>
 <p><span style="font-size: 12pt;"><span style="font-size: 12pt;">Determined parameters of the projection:<br /><span style="font-size: 12pt;">Projection:stereographic.</span></span><br />Transformed pole position: ?<sub>k</sub> = 0.2<sup>0</sup>, ?<sub>k</sub> = -80.3<sup>0</sup>.</span><br /><span style="font-size: 12pt;"> Standard parallels: ?<sub>1</sub> =0. 0<sup>0</sup>, ?<sub>2</sub> =0.0<sup>0</sup>.</span><br /><span style="font-size: 12pt;"> Longitude of the central meridian: ?<sub>0</sub> = 0.0<sup>0</sup>.</span><br /><span style="font-size: 12pt;"> Arbitrary constant parameter: k = 1.0. </span><br /><span style="font-size: 12pt;"> Auxiliary sphere radius: R'= 2.2 m. </span><br /><span style="font-size: 12pt;"> Map scale: S = 39 380 986.</span><br /><span style="font-size: 12pt;"> Angle of rotation: ? = 0.00.</span></p>
 
 
