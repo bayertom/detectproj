@@ -54,7 +54,7 @@
 </tr>
 <tr>
 <td><em>nmm8</em></td>
-<td style="text-align: center;">&nbsp;dlat8</td>
+<td style="text-align: center;">&nbsp;8</td>
 <td style="text-align: center;">Global</td>
 <td>Nelder-Mead optimization (Simplex method), map rotation involved.</td>
 </tr>
