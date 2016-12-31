@@ -18,40 +18,105 @@
 </ul>
 
 
+
+
 <h3><strong>Running the script</strong></h3>
+<h2>&nbsp;</h2>
+<h2>Command-line version of detectproj in C++</h2>
+<p>The generic C++ version&nbsp;(C++11 support) of the software detectprojv2j is available from git repository. <br />The basic parameters can be set using the command-line.<br />All methods and optimization techniques are involved.<br />Supported compilers: g++, msvc2015.</p>
+<h3>Basic usage</h3>
+<p>Set method, test and reference files, detection/optimization methods. Available methods: nlsm7, nlsm8, nmm7, nmm8, dem7, dem8:</p>
+<table>
+<tbody>
+<tr>
+<td><strong>Method</strong></td>
+<td><strong>Amount of parameters</strong></td>
+<td><strong>Optimization</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td><em>nlsm7</em></td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">Local</td>
+<td>Non-linear least squares optimization based on hybrid BFGS.</td>
+</tr>
+<tr>
+<td><em>nlsm8</em></td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">Local</td>
+<td>Non-linear least squares optimization based on hybrid BFGS, map rotation involved.</td>
+</tr>
+<tr>
+<td><em>nmm7</em></td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">Global</td>
+<td>Nelder-Mead optimization (Simplex method).</td>
+</tr>
+<tr>
+<td><em>nmm8</em></td>
+<td style="text-align: center;">&nbsp;dlat8</td>
+<td style="text-align: center;">Global</td>
+<td>Nelder-Mead optimization (Simplex method), map rotation involved.</td>
+</tr>
+<tr>
+<td><em>dem7</em></td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">Global</td>
+<td>Differential evolution optimization.</td>
+</tr>
+<tr>
+<td><em>dem8</em></td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">Global</td>
+<td>Differential evolution optimization, map rotation involved.</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<p><span style="font-family: courier new,courier;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; detectprojv2 +met=nlsm7 e:\maps\Seutter\test.txt e:\maps\Seutter\reference.txt<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; detectprojv2 +met=nmm7 e:\maps\Seutter\test.txt e:\maps\Seutter\reference.txt<br /></span></p>
+<h3>Set meridian/parallel increment</h3>
+<p>Set method, test and reference files, detection/optimization methods, meridian/parallel increments.&nbsp; This option is important for the DXF files with the generated graticule for setting dlat/dlon increments of meridians/parallels.</p>
+<table>
+<tbody>
+<tr>
+<td><strong>Parameter</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td><em>dlat</em></td>
+<td style="text-align: center;">10</td>
+<td>Latitude step between two adjacent parallels</td>
+</tr>
+<tr>
+<td><em>dlon</em></td>
+<td style="text-align: center;">10</td>
+<td>Longitude step between two adjacent meridians</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<p><span style="font-family: courier new,courier;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; detectprojv2 +met=nlsm7 +dlat=15 +dlon=30 e:\maps\Seutter\test.txt e:\maps\Seutter\reference.txt<br /></span></p>
+<h3>Set amount of exported graticules</h3>
+<p>Set method, test and reference files, detection/optimization methods, meridian/parallel increments, amount of generated graticules exported to the DXF format.</p>
+<table>
+<tbody>
+<tr>
+<td><strong>Parameter</strong></td>
+<td><strong>Default</strong></td>
+<td><strong>Desciption </strong></td>
+</tr>
+<tr>
+<td><em>gr</em></td>
+<td style="text-align: center;">20</td>
+<td>Amount of best-fit graticules exported to the DXF file; gr&lt;=90.</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;Example:</p>
+<p><span style="font-family: courier new,courier;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; detectprojv2 +met=nlsm7 +dlat=15 +dlon=30&nbsp;+gr=30 e:\maps\Seutter\test.txt e:\maps\Seutter\reference.txt<br /></span></p>
 
- 1] Basic: set method, test and reference files, detection/optimization methods 
 
-    detectprojv2 +met=nlsm7 test_points.txt reference.txt
-
-    available methods: nlsm7, nlsm8, nmm7, nmm8, dem7, dem8
-
- 		nlsm7		Non-linear least squares optimization, 7 determined parameters (M7)
- 		nlsm8		Non-linear least squares optimization, 8 determined parameters (M8), rotation involved
- 		nmm7		Nelder-Mead optimization, 7 determined parameters (M7)
- 		nmm8		Nelder-Mead optimization, 8 determined parameters (M8), rotation involved
- 		dem7		Differential evolution optimization, 7 determined parameters (M7)
- 		dem8		Differential evolution optimization, 8 determined parameters (M8), rotation involved
-
- 2] Set method, test and reference files, detection/optimization methods, meridian/parallel increments
- 
-    Important for DXF with the generated meridians/parallels; setting dlat/dlon increments of meridians/parallels
-
-    detectprojv2 +met=nlsm7 +dlat=10 +dlon=10 test_points.txt reference.txt
-
- 		dlat		Latitude step between two parallels (dlat >=1)
- 		dlon		Longitude step between two meridians (dlon>=1)
-
- 3] Set method, test and reference files, detection/optimization methods, meridian/parallel increments, amount of exported graticules to DXF
-
-    detectprojv2 +met=nlsm7 +dlat=10 +dlon=10 +gr=20 test_points.txt reference.txt
-
- 		gr		Amount of best-fit graticules exported to the DXF file (gr<=90)
-
-
- Example:
-
-		detectprojv2.exe +met=nlsm7 +dlat=10 +dlon=10 +gr=30 e:\maps\WorldMaps\Seutter\test.txt e:\maps\WorldMaps\Seutter\reference.txt 
 
 
 <h3>&nbsp;Sample 1: Map of Europe, normal aspect of the projection</h3>
