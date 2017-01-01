@@ -24,7 +24,6 @@
 
 #include "TVector.h"
 
-
 template <typename T>
 using TVector2D = TVector< TVector <T> >;
 

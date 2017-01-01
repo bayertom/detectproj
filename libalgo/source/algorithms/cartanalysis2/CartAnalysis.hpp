@@ -239,8 +239,8 @@ Matrix <T> CartAnalysis::AM7(const unsigned int m, const std::shared_ptr <Projec
 	A(0, 0) = 0.01 * scale;
 	A(1, 0) = -90;
 	A(2, 0) = -180;
-	A(3, 0) = proj->getLat1Interval().min;
-	A(4, 0) = proj->getLat1Interval().min;
+	A(3, 0) = proj->getLat1Interval().min_value;
+	A(4, 0) = proj->getLat1Interval().min_value;
 	A(5, 0) = -180;
 	A(6, 0) = 0;
 
@@ -258,8 +258,8 @@ Matrix <T> CartAnalysis::BM7(const unsigned int m, const std::shared_ptr <Projec
 	B(0, 0) = 100.0 * scale;
 	B(1, 0) = 90;
 	B(2, 0) = 180;
-	B(3, 0) = proj->getLat1Interval().max;
-	B(4, 0) = proj->getLat1Interval().max;
+	B(3, 0) = proj->getLat1Interval().max_value;
+	B(4, 0) = proj->getLat1Interval().max_value;
 	B(5, 0) = 180;
 	B(6, 0) = 100;
 
@@ -275,8 +275,8 @@ Matrix <T> CartAnalysis::AM8(const unsigned int m, const std::shared_ptr <Projec
 	//Set initial solution
 	A(0, 0) = -90;
 	A(1, 0) = -180;
-	A(2, 0) = proj->getLat1Interval().min;
-	A(3, 0) = proj->getLat1Interval().min;
+	A(2, 0) = proj->getLat1Interval().min_value;
+	A(3, 0) = proj->getLat1Interval().min_value;
 	A(4, 0) = -180;
 	A(5, 0) = 0;
 
@@ -292,8 +292,8 @@ Matrix <T> CartAnalysis::BM8(const unsigned int m, const std::shared_ptr <Projec
 	//Set initial solution
 	B(0, 0) = 90;
 	B(1, 0) = 180;
-	B(2, 0) = proj->getLat1Interval().max;
-	B(3, 0) = proj->getLat1Interval().max;
+	B(2, 0) = proj->getLat1Interval().max_value;
+	B(3, 0) = proj->getLat1Interval().max_value;
 	B(4, 0) = 180;
 	B(5, 0) = 100;
 

@@ -22,7 +22,7 @@
 #ifndef PlaneIntersection_HPP
 #define PlaneIntersection_HPP
 
-#include "libalgo/source/algorithms/matrixoperations/MatrixOperations.h"
+#include "libalgo/source/algorithms/matrixoperations2/MatrixOperations.h"
 
 //Set namespace
 using namespace MatrixOperations;

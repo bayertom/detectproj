@@ -33,11 +33,11 @@ void Parallel<T>::createParallel()
 	//Create parallel
 
 	//Set start value of the latitude as a multiplier of dlon 
-	const T lon_start = Round::roundToMultipleFloor(lon_interval.min, dlon) + dlon;
-	const T lon_end = Round::roundToMultipleCeil(lon_interval.max, dlon) - dlon;
+	const T lon_start = Round::roundToMultipleFloor(lon_interval.min_value, dlon) + dlon;
+	const T lon_end = Round::roundToMultipleCeil(lon_interval.max_value, dlon) - dlon;
 
 	//Add first point (lower bound of the interval)
-	lons.push_back(std::max(std::min(lon_interval.min + lon_min_shift, MAX_LON), MIN_LON));
+	lons.push_back(std::max(std::min(lon_interval.min_value + lon_min_shift, MAX_LON), MIN_LON));
 
 	//Add intermediate points
 	for (T lon_point = lon_start; lon_point <= lon_end; lon_point += dlon)
@@ -46,7 +46,7 @@ void Parallel<T>::createParallel()
 	}
 
 	//Add last point (upper bound of the interval)
-	lons.push_back(std::max(std::min(lon_interval.max - lon_max_shift, MAX_LON), MIN_LON));
+	lons.push_back(std::max(std::min(lon_interval.max_value - lon_max_shift, MAX_LON), MIN_LON));
 }
 
 

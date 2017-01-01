@@ -25,12 +25,12 @@
 #include <list>
 #include <memory>
 
-#include "libalgo/source/types/TVector.h"
 #include "libalgo/source/types/TVector2D.h"
 #include "libalgo/source/types/TList.h"
 #include "libalgo/source/types/TInterval.h"
 #include "libalgo/source/types/TGraticuleError.h"
 
+#include "libalgo/source/structures/point/Point3DGeographic.h"
 #include "libalgo/source/structures/graticule/Meridian.h"
 #include "libalgo/source/structures/graticule/Parallel.h"
 

@@ -26,13 +26,15 @@
 #include <math.h>
 #include <algorithm>
 #include <stack>
-#include <iterator>
 
 #include "libalgo/source/types/TInterval2D.h"
+#include "libalgo/source/types/TVector.h"
 
-#include "libalgo/source/structures/point/Point3DCartesian.h"
+#include "libalgo/source/const2/Const.h"
 
 #include "libalgo/source/algorithms/round/Round.h"
+#include "libalgo/source/algorithms/greatcircleintersection/GreatCircleIntersection.h"
+
 #include "libalgo/source/exceptions/MathException.h"
 
 
@@ -47,21 +49,21 @@ void Graticule::createGraticule ( const std::shared_ptr <Projection <T> > proj, 
 	const T lon0 = proj->getLon0();
 
         //Get size of the interval
-        const T lat_interval_width = lat_extent.max - lat_extent.min;
-        const T lon_interval_width = lon_extent.max - lon_extent.min;
+        const T lat_interval_width = lat_extent.max_value - lat_extent.min_value;
+        const T lon_interval_width = lon_extent.max_value - lon_extent.min_value;
 
         //Generate meridians and parallels
         if ( lat_step <= lat_interval_width || lon_step <= lon_interval_width )
         {
                 //Create lat interval
 		TInterval<T> lat_interval;
-		lat_interval.min = std::max(lat_extent.min, MIN_LAT + GRATICULE_LAT_LON_SHIFT);
-		lat_interval.max = std::min(lat_extent.max, MAX_LAT - GRATICULE_LAT_LON_SHIFT);
+		lat_interval.min_value = std::max(lat_extent.min_value, MIN_LAT + GRATICULE_LAT_LON_SHIFT);
+		lat_interval.max_value = std::min(lat_extent.max_value, MAX_LAT - GRATICULE_LAT_LON_SHIFT);
 
 		//Create lon interval
 		TInterval<T> lon_interval;
-		lon_interval.min = std::max(lon_extent.min, MIN_LON + GRATICULE_LAT_LON_SHIFT);
-		lon_interval.max = std::min(lon_extent.max, MAX_LON - GRATICULE_LAT_LON_SHIFT);
+		lon_interval.min_value = std::max(lon_extent.min_value, MIN_LON + GRATICULE_LAT_LON_SHIFT);
+		lon_interval.max_value = std::min(lon_extent.max_value, MAX_LON - GRATICULE_LAT_LON_SHIFT);
 
 		//Create 2D interval and add to the stack S
 		TInterval2D <T> lat_lon_interval = { lat_interval, lon_interval };
@@ -75,7 +77,7 @@ void Graticule::createGraticule ( const std::shared_ptr <Projection <T> > proj, 
 		{
 			//Get the current lat/lon interval on the top of S
 			TInterval2D <T> interval = S.top();
-			
+			T ttt= interval.i1.min_value;
 			//Remove element from the stack S
 			S.pop();
 
@@ -114,66 +116,66 @@ void Graticule::createGraticule ( const std::shared_ptr <Projection <T> > proj, 
 				}
 
 				//Empty lat interval, continue
-				if (fabs(interval.i1.max - interval.i1.min) < 10 * GRATICULE_LAT_LON_SHIFT)
+				if (fabs(interval.i1.max_value - interval.i1.min_value) < 10 * GRATICULE_LAT_LON_SHIFT)
 				{
 					continue;
 				}
 
 				//Lat value is lower bound: shift lower bound
-				else if ((fabs(interval.i1.min - lat_error) <  2 * GRATICULE_LAT_LON_SHIFT) && (fabs(interval.i1.max - interval.i1.min) > 10 * GRATICULE_LAT_LON_SHIFT))
+				else if ((fabs(interval.i1.min_value - lat_error) <  2 * GRATICULE_LAT_LON_SHIFT) && (fabs(interval.i1.max_value - interval.i1.min_value) > 10 * GRATICULE_LAT_LON_SHIFT))
 				{
-					interval.i1.min += 2 * GRATICULE_LAT_LON_SHIFT;
+					interval.i1.min_value += 2 * GRATICULE_LAT_LON_SHIFT;
 				}
 
 				//Lat value is upper bound: shift upper bound
-				else if ((fabs(interval.i1.max - lat_error) <  2 * GRATICULE_LAT_LON_SHIFT) && (fabs(interval.i1.max - interval.i1.min) > 10 * GRATICULE_LAT_LON_SHIFT))
+				else if ((fabs(interval.i1.max_value - lat_error) <  2 * GRATICULE_LAT_LON_SHIFT) && (fabs(interval.i1.max_value - interval.i1.min_value) > 10 * GRATICULE_LAT_LON_SHIFT))
 				{
-					interval.i1.max -= 2 * GRATICULE_LAT_LON_SHIFT;
+					interval.i1.max_value -= 2 * GRATICULE_LAT_LON_SHIFT;
 				}
-
+				
 				//Lat value inside interval: split intervals
-				else if ((interval.i1.min < lat_error) && (interval.i1.max > lat_error))
+				else if ((interval.i1.max_value < lat_error) && (interval.i1.max_value > lat_error))
 				{
 					//Create second 2D interval and add to the stack S
 					TInterval2D <T> interval2 = interval;
-					interval2.i1.min = lat_error + 2 * GRATICULE_LAT_LON_SHIFT;
+					interval2.i1.min_value = lat_error + 2 * GRATICULE_LAT_LON_SHIFT;
 					S.push(interval2);
 
 					//Change upper bound of the first 2D interval
-					interval.i1.max = lat_error - 2 * GRATICULE_LAT_LON_SHIFT;
+					interval.i1.max_value = lat_error - 2 * GRATICULE_LAT_LON_SHIFT;
 
 					//Increment split amount
 					split_amount++;
 				}
 
 				//Empty lon interval, delete
-				else if (fabs(interval.i2.max - interval.i2.min) < 10 * GRATICULE_LAT_LON_SHIFT)
+				else if (fabs(interval.i2.max_value - interval.i2.min_value) < 10 * GRATICULE_LAT_LON_SHIFT)
 				{
 					continue;
 				}
 
 				//Lon value is lower boun : shift lower bound
-				else if ((fabs(interval.i2.min - lon_error) <  2 * GRATICULE_LAT_LON_SHIFT) && (fabs(interval.i2.max - interval.i2.min) > 10 * GRATICULE_LAT_LON_SHIFT))
+				else if ((fabs(interval.i2.min_value - lon_error) <  2 * GRATICULE_LAT_LON_SHIFT) && (fabs(interval.i2.max_value - interval.i2.min_value) > 10 * GRATICULE_LAT_LON_SHIFT))
 				{
-					interval.i2.min += 2 * GRATICULE_LAT_LON_SHIFT;
+					interval.i2.min_value += 2 * GRATICULE_LAT_LON_SHIFT;
 				}
 
 				//Lon value is upper bound: shift upper bound
-				else if ((fabs(interval.i2.max - lon_error) <  2 * GRATICULE_LAT_LON_SHIFT) && (fabs(interval.i2.max - interval.i2.min) > 10 * GRATICULE_LAT_LON_SHIFT))
+				else if ((fabs(interval.i2.max_value - lon_error) <  2 * GRATICULE_LAT_LON_SHIFT) && (fabs(interval.i2.max_value - interval.i2.min_value) > 10 * GRATICULE_LAT_LON_SHIFT))
 				{
-					interval.i2.max -= 2 * GRATICULE_LAT_LON_SHIFT;
+					interval.i2.max_value -= 2 * GRATICULE_LAT_LON_SHIFT;
 				}
 
 				//Lon value inside interval: split intervals
-				else if ((interval.i2.min < lon_error) && (interval.i2.max > lon_error))
+				else if ((interval.i2.min_value < lon_error) && (interval.i2.max_value > lon_error))
 				{
 					//Create second 2D interval and add to the stack S
 					TInterval2D <T> interval2 = interval;
-					interval2.i2.min = lon_error + 2 * GRATICULE_LAT_LON_SHIFT;
+					interval2.i2.min_value = lon_error + 2 * GRATICULE_LAT_LON_SHIFT;
 					S.push(interval2);
 
 					//Change upper bound of the first 2D interval
-					interval.i2.max = lon_error - 2 * GRATICULE_LAT_LON_SHIFT;
+					interval.i2.max_value = lon_error - 2 * GRATICULE_LAT_LON_SHIFT;
 
 					//Increment split amount
 					split_amount++;
@@ -199,10 +201,10 @@ template <typename T, typename Point>
 void Graticule::createMeridians (const std::shared_ptr <Projection <T> > proj, const TInterval<T> &lat_interval, const TInterval<T> &lon_interval, const T lon_step, const T d_lat, const T alpha, TVector <Meridian <T> > &meridians, TVector2D <Point> & meridians_proj, T &lat_error, T &lon_error )
 {
 	//Set start value of the longitude as a multiplier of lon_step 
-	const T lon_start = Round::roundToMultipleFloor(lon_interval.min, lon_step) + lon_step;
-	const T lon_end = Round::roundToMultipleCeil(lon_interval.max, lon_step) - lon_step;
+	const T lon_start = Round::roundToMultipleFloor(lon_interval.min_value, lon_step) + lon_step;
+	const T lon_end = Round::roundToMultipleCeil(lon_interval.max_value, lon_step) - lon_step;
 	
-	T lon = std::max(std::min(lon_interval.min + GRATICULE_LAT_LON_SHIFT, MAX_LON), MIN_LON);
+	T lon = std::max(std::min(lon_interval.min_value + GRATICULE_LAT_LON_SHIFT, MAX_LON), MIN_LON);
 
 	try
 	{
@@ -217,12 +219,12 @@ void Graticule::createMeridians (const std::shared_ptr <Projection <T> > proj, c
 
 		//Create last meridian (upper bound of the interval, not higher than MAX_LON)
 		//Split the interval, if a meridian is intersected by the prime meridian of the transformed system [lat_trans, lon_trans]
-		lon = std::max(std::min(lon_interval.max - GRATICULE_LAT_LON_SHIFT, MAX_LON), MIN_LON);
+		lon = std::max(std::min(lon_interval.max_value - GRATICULE_LAT_LON_SHIFT, MAX_LON), MIN_LON);
 		createMeridianFragment(proj, lon, lat_interval, d_lat, alpha, meridians, meridians_proj);
 
 		//Create meridian intersecting the pole of the transformed system [lat_trans, lon_trans]
 		lon = proj->getCartPole().getLon();
-		if ((lon > lon_interval.min) && (lon < lon_interval.max))
+		if ((lon > lon_interval.min_value) && (lon < lon_interval.max_value))
 		{
 			createMeridianFragment(proj, lon - GRATICULE_LAT_LON_SHIFT, lat_interval, d_lat, alpha, meridians, meridians_proj);
 			createMeridianFragment(proj, lon + GRATICULE_LAT_LON_SHIFT, lat_interval, d_lat, alpha, meridians, meridians_proj);
@@ -230,7 +232,7 @@ void Graticule::createMeridians (const std::shared_ptr <Projection <T> > proj, c
 
 		//Create meridian opposite the pole of the transformed system [lat_trans, lon_trans]
 		lon = (lon > 0 ? lon - 180 : lon + 180);
-		if ((lon > lon_interval.min) && (lon < lon_interval.max))
+		if ((lon > lon_interval.min_value) && (lon < lon_interval.max_value))
 		{
 			createMeridianFragment(proj, lon - GRATICULE_LAT_LON_SHIFT, lat_interval, d_lat, alpha, meridians, meridians_proj);
 			createMeridianFragment(proj, lon + GRATICULE_LAT_LON_SHIFT, lat_interval, d_lat, alpha, meridians, meridians_proj);
@@ -261,10 +263,10 @@ void Graticule::createParallels ( const std::shared_ptr <Projection <T> > proj, 
 	const T alpha, TVector <Parallel <T> > &parallels, TVector2D <Point> & parallels_proj, T &lat_error, T &lon_error )
 {
 	//Set start value of the longitude as a multiplier of lon_step 
-	const T lat_start = Round::roundToMultipleFloor(lat_interval.min, lat_step) + lat_step;
-	const T lat_end = Round::roundToMultipleCeil(lat_interval.max, lat_step) - lat_step;
+	const T lat_start = Round::roundToMultipleFloor(lat_interval.min_value, lat_step) + lat_step;
+	const T lat_end = Round::roundToMultipleCeil(lat_interval.max_value, lat_step) - lat_step;
 	
-	T lat = std::max(std::min(lat_interval.min + GRATICULE_LAT_LON_SHIFT, MAX_LAT), MIN_LAT);
+	T lat = std::max(std::min(lat_interval.min_value + GRATICULE_LAT_LON_SHIFT, MAX_LAT), MIN_LAT);
 	
 	try
 	{
@@ -279,7 +281,7 @@ void Graticule::createParallels ( const std::shared_ptr <Projection <T> > proj, 
 
 		//Create last parallel (upper bound of the interval, not greater than MAX_LAT)
 		//Split the interval, if a parallel is intersected by the prime meridian of the transformed system [lat_trans, lon_trans]
-		lat = std::max(std::min(lat_interval.max - GRATICULE_LAT_LON_SHIFT, MAX_LAT), MIN_LAT);
+		lat = std::max(std::min(lat_interval.max_value - GRATICULE_LAT_LON_SHIFT, MAX_LAT), MIN_LAT);
 		createParallelFragment(proj, lat, lon_interval, d_lon, alpha, parallels, parallels_proj);
 	}
 
@@ -345,9 +347,9 @@ TVector<TInterval<T> > Graticule::splitLatInterval(const TInterval <T> &lat_inte
 	//to two subintervals [lat_min, lat_inters], [lat_inters, lat_max]
 	TVector<TInterval<T> > lats_split;
 
-	const Point3DGeographic <T> p1(lat_interval.min, lon);
-	const Point3DGeographic <T> p2(0.5 * (lat_interval.min + lat_interval.max), lon);
-	const Point3DGeographic <T> p3(lat_interval.max, lon);
+	const Point3DGeographic <T> p1(lat_interval.min_value, lon);
+	const Point3DGeographic <T> p2(0.5 * (lat_interval.min_value + lat_interval.max_value), lon);
+	const Point3DGeographic <T> p3(lat_interval.max_value, lon);
 	
 	//Sample central meridian of the transformed system in the oblique aspect
 	//Transform it to the normal aspect
@@ -381,26 +383,26 @@ TVector<TInterval<T> > Graticule::splitLatInterval(const TInterval <T> &lat_inte
 		const T lon_inters2 = i2.getLon();
 
 		//Is an intersection point i1 latitude inside the lat interval? Create 2 intervals.
-		if ((lat_inters1 > lat_interval.min) && (lat_inters1 < lat_interval.max) && (fabs(lon - lon_inters1) < ANGLE_ROUND_ERROR))
+		if ((lat_inters1 > lat_interval.min_value) && (lat_inters1 < lat_interval.max_value) && (fabs(lon - lon_inters1) < ANGLE_ROUND_ERROR))
 		{
-			lats_split.push_back(TInterval <T> { lat_interval.min, lat_inters1 - GRATICULE_LAT_LON_SHIFT });
-			lats_split.push_back(TInterval <T> { lat_inters1 + GRATICULE_LAT_LON_SHIFT, lat_interval.max });
+			lats_split.push_back(TInterval <T> { lat_interval.min_value, lat_inters1 - GRATICULE_LAT_LON_SHIFT });
+			lats_split.push_back(TInterval <T> { lat_inters1 + GRATICULE_LAT_LON_SHIFT, lat_interval.max_value });
 			
 			return lats_split;
 		}
 		
 		//Is an intersection point i1 latitude inside the lat interval? Create 2 intervals.
-		else if ((lat_inters2 > lat_interval.min) && (lat_inters2 < lat_interval.max) && (fabs(lon - lon_inters2) < ANGLE_ROUND_ERROR))
+		else if ((lat_inters2 > lat_interval.min_value) && (lat_inters2 < lat_interval.max_value) && (fabs(lon - lon_inters2) < ANGLE_ROUND_ERROR))
 		{		
-			lats_split.push_back(TInterval <T> { lat_interval.min, lat_inters2 - GRATICULE_LAT_LON_SHIFT});
-			lats_split.push_back(TInterval <T> { lat_inters2 + GRATICULE_LAT_LON_SHIFT, lat_interval.max });
+			lats_split.push_back(TInterval <T> { lat_interval.min_value, lat_inters2 - GRATICULE_LAT_LON_SHIFT});
+			lats_split.push_back(TInterval <T> { lat_inters2 + GRATICULE_LAT_LON_SHIFT, lat_interval.max_value });
 
 			return lats_split;
 		}
 	}
 
 	//No intersection, no split
-	lats_split.push_back(TInterval <T> { lat_interval.min, lat_interval.max });
+	lats_split.push_back(TInterval <T> { lat_interval.min_value, lat_interval.max_value });
 	
 	return lats_split;
 }
@@ -413,9 +415,9 @@ TVector<TInterval<T> > Graticule::splitLonInterval(const TInterval <T> &lon_inte
 	//to three subintervals [lon_min, lon_inters1], [lon_inters1, lon_inters2], [lon_inters2, lon_max]
 	TVector<TInterval<T> > lons_split;
 
-	const Point3DGeographic <T> p1(lat, lon_interval.min + 1.0);
-	const Point3DGeographic <T> p2(lat, 0.5 * (lon_interval.min + lon_interval.max));
-	const Point3DGeographic <T> p3(lat, lon_interval.max - 1.0);
+	const Point3DGeographic <T> p1(lat, lon_interval.min_value + 1.0);
+	const Point3DGeographic <T> p2(lat, 0.5 * (lon_interval.min_value + lon_interval.max_value));
+	const Point3DGeographic <T> p3(lat, lon_interval.max_value - 1.0);
 
 	//Sample central meridian of the transformed system in the oblique aspect
 	//Transform it to the normal aspect
@@ -447,36 +449,36 @@ TVector<TInterval<T> > Graticule::splitLonInterval(const TInterval <T> &lon_inte
 		const T lon_inters2 = std::max(i1.getLon(), i2.getLon());
 
 		//Both intersections inside the lon interval? Create 3 intervals.
-		if (((lon_inters1 > lon_interval.min) && (lon_inters1 < lon_interval.max)) && ((lon_inters2 > lon_interval.min) && (lon_inters2 < lon_interval.max)))
+		if (((lon_inters1 > lon_interval.min_value) && (lon_inters1 < lon_interval.max_value)) && ((lon_inters2 > lon_interval.min_value) && (lon_inters2 < lon_interval.max_value)))
 		{
-			lons_split.push_back(TInterval <T> { lon_interval.min, lon_inters1 - GRATICULE_LAT_LON_SHIFT});
+			lons_split.push_back(TInterval <T> { lon_interval.min_value, lon_inters1 - GRATICULE_LAT_LON_SHIFT});
 			lons_split.push_back(TInterval <T> { lon_inters1 + GRATICULE_LAT_LON_SHIFT, lon_inters2 - GRATICULE_LAT_LON_SHIFT});
-			lons_split.push_back(TInterval <T> { lon_inters2 + GRATICULE_LAT_LON_SHIFT, lon_interval.max });
+			lons_split.push_back(TInterval <T> { lon_inters2 + GRATICULE_LAT_LON_SHIFT, lon_interval.max_value });
 
 			return lons_split;
 		}
 
 		//Only the first intersection lon1 inside the lon interval. Create 2 intervals.
-		else if ((lon_inters1 > lon_interval.min) && (lon_inters1 < lon_interval.max))
+		else if ((lon_inters1 > lon_interval.min_value) && (lon_inters1 < lon_interval.max_value))
 		{
-			lons_split.push_back(TInterval <T> { lon_interval.min, lon_inters1 - GRATICULE_LAT_LON_SHIFT});
-			lons_split.push_back(TInterval <T> { lon_inters1 + GRATICULE_LAT_LON_SHIFT, lon_interval.max });
+			lons_split.push_back(TInterval <T> { lon_interval.min_value, lon_inters1 - GRATICULE_LAT_LON_SHIFT});
+			lons_split.push_back(TInterval <T> { lon_inters1 + GRATICULE_LAT_LON_SHIFT, lon_interval.max_value });
 
 			return lons_split;
 		}
 
 		//Only the second intersection lon2 inside the lon interval. Create 2 intervals.
-		else if (lon_inters2 > lon_interval.min && lon_inters2 < lon_interval.max)
+		else if (lon_inters2 > lon_interval.min_value && lon_inters2 < lon_interval.max_value)
 		{
-			lons_split.push_back(TInterval <T> { lon_interval.min, lon_inters2 - GRATICULE_LAT_LON_SHIFT});
-			lons_split.push_back(TInterval <T> { lon_inters2 + GRATICULE_LAT_LON_SHIFT, lon_interval.max });
+			lons_split.push_back(TInterval <T> { lon_interval.min_value, lon_inters2 - GRATICULE_LAT_LON_SHIFT});
+			lons_split.push_back(TInterval <T> { lon_inters2 + GRATICULE_LAT_LON_SHIFT, lon_interval.max_value });
 
 			return lons_split;
 		}
 	}
 
 	//No intersection, no split
-	lons_split.push_back(TInterval <T> { lon_interval.min, lon_interval.max });
+	lons_split.push_back(TInterval <T> { lon_interval.min_value, lon_interval.max_value });
 
 	return lons_split;
 }

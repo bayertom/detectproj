@@ -47,6 +47,10 @@ class Graticule
 		
         private:
 		
+		template <typename T>
+		static void splitIntervals ( TList <TInterval<T>> &intervals, typename TList <TInterval<T>>::iterator i_intervals, const T error );
+
+		
                 template <typename T, typename Point>
                 static void createMeridians ( const std::shared_ptr <Projection <T> > proj, const TInterval<T> &lat_interval, const TInterval<T> &lon_interval, const T lon_step, const T d_lat, const T alpha, TVector <Meridian <T> > &meridians, TVector2D <Point> & meridians_proj, T &lat_error, T &lon_error );
 

@@ -119,22 +119,22 @@ namespace MatrixOperations
 		const unsigned int m = A.rows(), n = A.cols();
 
 		//Initialize minimum
-		T min_value = A(0, 0);
+		T min = A(0, 0);
 
 		//Process all items
 		for (unsigned int i = 0; i < m; i++)
 		{
 			for (unsigned int j = 0; j < n; j++)
 			{
-				if (A(i, j) < min_value)
+				if (A(i, j) < min)
 				{
-					min_value = A(i, j);
+					min = A(i, j);
 					row = i; col = j;
 				}
 			}
 		}
 
-		return min_value;
+		return min;
 	}
 
 
@@ -154,22 +154,22 @@ namespace MatrixOperations
 		const unsigned int m = A.rows(), n = A.cols();
 
 		//Initialize maximum
-		T max_value = A(0, 0);
+		T max = A(0, 0);
 
 		//Process all items
 		for (unsigned int i = 0; i < m; i++)
 		{
 			for (unsigned int j = 0; j < n; j++)
 			{
-				if (A(i, j) > max_value)
+				if (A(i, j) > max)
 				{
-					max_value = A(i, j);
+					max = A(i, j);
 					row = i; col = j;
 				}
 			}
 		}
 
-		return max_value;
+		return max;
 	}
 
 

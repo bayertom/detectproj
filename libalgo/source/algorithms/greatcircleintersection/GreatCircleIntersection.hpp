@@ -24,7 +24,7 @@
 
 
 #include "libalgo/source/algorithms/planeintersection/PlaneIntersection.h"
-
+#include "libalgo/source/algorithms/sphereintersection/SphereIntersection.h"
 
 template <typename T>
 bool GreatCircleIntersection::getGreatCirclePlainIntersection(const Point3DGeographic<T> &p1, const Point3DGeographic<T> &p2, const Point3DGeographic<T> &p3, const Point3DGeographic<T> &p4,

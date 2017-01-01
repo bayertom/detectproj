@@ -32,11 +32,11 @@ void Meridian<T>::createMeridian()
 	//Create meridian
 
  	//Set start value of the latitude as a multiplier of dlat 
-	const T lat_start = Round::roundToMultipleFloor(lat_interval.min, dlat) + dlat;
-	const T lat_end = Round::roundToMultipleCeil(lat_interval.max, dlat) - dlat;
+	const T lat_start = Round::roundToMultipleFloor(lat_interval.min_value, dlat) + dlat;
+	const T lat_end = Round::roundToMultipleCeil(lat_interval.max_value, dlat) - dlat;
 
 	//Add first point (lower bound of the interval)
-	lats.push_back(std::max(std::min(lat_interval.min + lat_min_shift, MAX_LAT), MIN_LAT));
+	lats.push_back(std::max(std::min(lat_interval.min_value + lat_min_shift, MAX_LAT), MIN_LAT));
 
 	//Add intermediate points
 	for (T lat_point = lat_start; lat_point <= lat_end; lat_point += dlat)
@@ -45,7 +45,7 @@ void Meridian<T>::createMeridian()
 	}
 
 	//Add last point (upper bound of the interval)
-	lats.push_back(std::max(std::min(lat_interval.max - lat_max_shift, MAX_LAT), MIN_LAT));
+	lats.push_back(std::max(std::min(lat_interval.max_value - lat_max_shift, MAX_LAT), MIN_LAT));
 }
 
 

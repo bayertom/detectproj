@@ -26,7 +26,7 @@
 template <typename T>
 struct TInterval 
 { 
-	T min, max; 
+	T min_value, max_value; 
 };
 
 #endif
