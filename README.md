@@ -3,6 +3,9 @@
 <h2><strong><strong><span style="font-family: Arial;">Software </span></strong><span style="color: #ff0000; font-family: Arial;">detectproj</span><span style="font-family: Arial;">, version 1.1,<br />GNU/GPL projection analysis software for Windows ® 7/8/8.1/10, GNU/Linux and MacOS.</span></strong></h2>
 <p>Automated estimation of the map projection and its parameters based on the non-linear optimization...
 
+<p><span style="color: #ff0000;"><strong>New (December 19, 2016): </strong></span><strong>version&nbsp; 1.1 of</strong><span style="color: #ff0000;"><strong> <a href="https://web.natur.cuni.cz/~bayertom/index.php/projection-analysis/installation">detectproj</a></strong></span><strong>.</strong><span style="color: #ff0000;"><strong><br /></strong></span>Support <span style="font-size: 12pt;">lon<sub>0</sub></span> parameter for the oblique aspect of the projection. Compare <a href="https://web.natur.cuni.cz/~bayertom/images/detectproj/detectproj_sinu.png">old</a> and <a href="https://web.natur.cuni.cz/~bayertom/images/detectproj/detectproj_sinu_lon0_support.png">new</a> versions.</p>
+
+
 <ul>
 <li>100 map projections are supported,</li>
 <li>detection of the projection name and family,</li>
